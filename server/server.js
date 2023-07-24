@@ -1,7 +1,9 @@
 require('dotenv').config();
-const userRoutes = require('./routes/users');
+const authRoutes = require('./routes/auth');
+const sauceRoutes = require('./routes/sauce');
 const express = require("express");
 const mongoose = require("mongoose");
+const cors = require("cors");
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -14,9 +16,24 @@ mongoose.connect(process.env.MONGO_DB_CONNECTION_STRING)
     console.error(err);
   });
 
-app.use(express.urlencoded());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-app.use('/api/users', userRoutes);
+const whitelist = ['http://localhost:4200'];
+const corOptions = {
+  origin: (origin, callback) => {
+    if (whitelist.indexOf(origin !== -1 || !origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+
+app.use(cors(corOptions));
+
+app.use('/api/auth', authRoutes);
+app.use('/api/sauces', sauceRoutes)
 app.listen(port, () => {
   console.log('Running piiquante node server on ', port)
 });
