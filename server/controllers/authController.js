@@ -2,6 +2,31 @@ const User = require('../models/User.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+function signUpUser(req, res) {
+  bcrypt.hash(req.body.password, 11, (err, hashedPassword) => {
+    if (err) {
+      console.error("Error hashing the password:", err);
+      return res.status(500).send({error: err});
+    } else {
+      const newUser = new User({
+        email: req.body.email,
+        password: hashedPassword
+      });
+
+      // add mongoose unique validator to make sure emails arent duplicated
+      newUser.save()
+        .then(() => {
+          console.log('User signed up successfully!');
+          return res.status(200).send({message: 'User signed up successfully'});
+        })
+        .catch((err) => {
+          console.error('an error occurred', err);
+          return res.status(500).send({message: "Couldn't sign up user"});
+        });
+    }
+  });
+}
+
 function loginUser(req, res) {
 
   const {email, password} = req.body;
@@ -24,6 +49,7 @@ function loginUser(req, res) {
             process.env.JWT_PRIVATE_KEY,
             {expiresIn: '24h'}
           )
+
           res.status(200).send({
             userId: user._id,
             token: token
@@ -41,29 +67,7 @@ function loginUser(req, res) {
     });
 }
 
-function signUpUser(req, res) {
-  bcrypt.hash(req.body.password, 11, (err, hashedPassword) => {
-    if (err) {
-      console.error("Error hashing the password:", err);
-      return res.status(500).send({error: err});
-    } else {
-      const newUser = new User({
-        email: req.body.email,
-        password: hashedPassword
-      });
 
-      newUser.save()
-        .then(() => {
-          console.log('User signed up successfully!');
-          return res.status(200).send({message: 'User signed up successfully'});
-        })
-        .catch((err) => {
-          console.error('an error occurred', err);
-          return res.status(500).send({message: "Couldn't sign up user"});
-        });
-    }
-  });
-}
 
 module.exports = {
   loginUser, signUpUser

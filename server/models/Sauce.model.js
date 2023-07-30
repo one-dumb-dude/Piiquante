@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const sauceSchema = new Schema({
-  userId: {type: String, required: true},
+  userId: {type: Schema.Types.ObjectId, required: true},
   name: {type: String, required: true},
   manufacturer: {type: String, required: true},
   description: {type: String, required: true},
@@ -12,7 +12,7 @@ const sauceSchema = new Schema({
   heat: {type: Number, required: true, min:1, max: 10},
   likes: {type: Number, default: 0},
   dislikes: {type: Number, default: 0},
-  userLikes: [{type: Schema.Types.ObjectId, ref: 'User'}],
+  userLiked: [{type: Schema.Types.ObjectId, ref: 'User'}],
   usersDisliked: [{type: Schema.Types.ObjectId, ref: 'User'}]
 });
 
