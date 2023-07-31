@@ -13,9 +13,12 @@ function getSauces(req, res) {
 }
 
 function getOneSauce(req, res) {
-  Sauce.findById(req.body._id)
+  console.log(req.params)
+  console.log(req.params.id);
+  Sauce.findById(req.params.id)
     .then((sauce) => {
       console.log('you found a sauce');
+      console.log(sauce);
       res.status(201).json(sauce)
     })
     .catch(err => {

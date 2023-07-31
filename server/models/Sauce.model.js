@@ -12,7 +12,7 @@ const sauceSchema = new Schema({
   heat: {type: Number, required: true, min:1, max: 10},
   likes: {type: Number, default: 0},
   dislikes: {type: Number, default: 0},
-  userLiked: [{type: Schema.Types.ObjectId, ref: 'User'}],
+  usersLiked: [{type: Schema.Types.ObjectId, ref: 'User'}],
   usersDisliked: [{type: Schema.Types.ObjectId, ref: 'User'}]
 });
 
