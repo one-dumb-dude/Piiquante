@@ -4,6 +4,7 @@ const sauceRoutes = require('./routes/sauce');
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const path = require('path');
 const app = express();
 const port = process.env.PORT || 3001;
 
@@ -22,7 +23,7 @@ app.use(express.urlencoded({ extended: true }));
 const whitelist = ['http://localhost:4200'];
 const corOptions = {
   origin: (origin, callback) => {
-    if (whitelist.indexOf(origin !== -1 || !origin)) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -31,6 +32,8 @@ const corOptions = {
 };
 
 app.use(cors(corOptions));
+
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/sauces', sauceRoutes)
