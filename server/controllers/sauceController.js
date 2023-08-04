@@ -53,6 +53,61 @@ function createOneSauce(req, res) {
     });
 }
 
+function updateOneSauce(req, res) {
+  console.log('Update a Sauce');
+  const id = req.params.id;
+
+  if (req.body.sauce) {
+    console.log('Sauce with File!')
+    const sauceData = JSON.parse(req.body.sauce);
+    Sauce.updateOne(
+      { _id: id },
+      {
+        $set: {
+          userId: sauceData.userId,
+          name: sauceData.name,
+          manufacturer: sauceData.manufacturer,
+          description: sauceData.description,
+          mainPepper: sauceData.mainPepper,
+          imageUrl: 'http://localhost:3000/images/' + req.file.filename,
+          heat: sauceData.heat,
+        }
+      })
+      .then(() => {
+        console.log("Sauced was updated successfully");
+        res.status(201).json({message: 'Sauce was updated successfully'});
+      })
+      .catch((err) => {
+        console.error("Error updating sauce:", err);
+        res.status(500).json({message: 'Error updating sauce'});
+      });
+
+  } else {
+    console.log('Sauce with no file!')
+    Sauce.updateOne(
+      {_id: id},
+      {
+        $set: {
+          userId: req.body.userId,
+          name: req.body.name,
+          manufacturer: req.body.manufacturer,
+          description: req.body.description,
+          mainPepper: req.body.mainPepper,
+          heat: req.body.heat,
+        }
+      })
+      .then(() => {
+        console.log("Sauced was updated successfully");
+        res.status(201).json({message: 'Sauce was updated successfully'});
+      })
+      .catch((err) => {
+        console.error("Error updating sauce:", err);
+        res.status(500).json({message: 'Error updating sauce'});
+      })
+  }
+  // Sauce.updateOne({})
+}
+
 module.exports = {
-  getSauces, getOneSauce, createOneSauce
+  getSauces, getOneSauce, createOneSauce, updateOneSauce
 }
