@@ -61,7 +61,7 @@ function updateOneSauce(req, res) {
     console.log('Sauce with File!')
     const sauceData = JSON.parse(req.body.sauce);
     Sauce.updateOne(
-      { _id: id },
+      {_id: id},
       {
         $set: {
           userId: sauceData.userId,
@@ -108,6 +108,80 @@ function updateOneSauce(req, res) {
   // Sauce.updateOne({})
 }
 
+function deleteASauce(req, res) {
+  console.log('Delete a Sauce');
+  Sauce.deleteOne({_id: req.params.id})
+    .then(() => {
+      console.log('Sauce was deleted successfully');
+      res.status(201).json({message: 'Sauce was deleted successfully'});
+    })
+    .catch((err) => {
+      console.error('Error deleting sauce:', err);
+      res.status(500).json({message: 'Error deleting sauce'});
+    })
+}
+
+function likeASauce(req, res) {
+  console.log('Like a sauce');
+  console.log(req.body);
+
+  const id = req.params.id;
+  const userId = req.body.userId;
+
+  if (req.body.like === 1) {
+    Sauce.findOneAndUpdate(
+      {_id: id},
+      {$push: {usersLiked: userId}},
+      {new: true}
+    )
+      .then((updatedDocument) => {
+        if (updatedDocument) {
+          console.log('Updated Document', updatedDocument);
+
+          return Sauce.updateOne(
+            {_id: id},
+            {
+              $inc: {
+                likes: 1
+              }
+            }
+          )
+
+        } else {
+          console.log('No matching document found.');
+
+        }
+      })
+      .then((userLikedUpdate) => {
+        if (userLikedUpdate) {
+          console.log('user Liked transaction complete')
+          res.status(201).json({message: 'Liking a sauce was successful'})
+        }
+      })
+      .catch((error) => {
+        console.error('Error liking a sauce', error);
+        res.status(500).json({message: 'Error liking a sauce'})
+      });
+  } else if (req.body.like === 0) {
+    Sauce.updateMany(
+      {
+        _id: id,
+        $or: [{usersLiked: userId}, {usersDisliked: userId}]
+      },
+      {
+        $pull: {
+          usersLiked: userId, usersDisliked: userId
+        }
+      }
+    )
+      .then((updatedLikes) => {
+        console.log('')
+      })
+  }
+
+
+}
+
 module.exports = {
-  getSauces, getOneSauce, createOneSauce, updateOneSauce
+  getSauces, getOneSauce, createOneSauce, updateOneSauce, deleteASauce, likeASauce
 }
