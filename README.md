@@ -28,3 +28,5 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 
 
 https://www.npmjs.com/package/mongoose-unique-validator
+
+for updateAsauce, you have to make sure only the userId can modify there sauce and likes.

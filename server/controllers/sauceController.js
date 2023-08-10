@@ -149,7 +149,6 @@ function likeASauce(req, res) {
 
         } else {
           console.log('No matching document found.');
-
         }
       })
       .then((userLikedUpdate) => {
@@ -175,7 +174,11 @@ function likeASauce(req, res) {
       }
     )
       .then((updatedLikes) => {
-        console.log('')
+        console.log('Like/dislike is now neutral');
+        res.status(201).json({message: 'Like/dislike is now neutral'});
+      })
+      .catch(err => {
+        res.status(500).json({error: err});
       })
   }
 
