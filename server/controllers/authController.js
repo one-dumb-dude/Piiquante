@@ -17,7 +17,7 @@ function signUpUser(req, res) {
       newUser.save()
         .then(() => {
           console.log('User signed up successfully!');
-          return res.status(200).send({message: 'User signed up successfully'});
+          return res.status(201).send({message: 'User signed up successfully'});
         })
         .catch((err) => {
           console.error('an error occurred', err);
